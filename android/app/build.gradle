@@ -1,0 +1,72 @@
+plugins {
+    id 'com.android.application'
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode', '1').toInteger()
+def flutterVersionName = localProperties.getProperty('flutter.versionName', '1.0')
+
+android {
+    namespace "com.example.emobrace_app"
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17
+    }
+
+    defaultConfig {
+        applicationId "com.example.emobrace_app"
+        // Update minSdk to 23 to match Firebase's requirements
+        minSdk = 23
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+    }
+
+    buildTypes {
+        release {
+            // Enable shrinking and minifying
+            minifyEnabled true
+            shrinkResources true
+            
+            // Use default ProGuard rules and a custom rules file
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            // Use the debug signing config for simplicity (replace with your release key for production)
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    // Firebase BOM (Bill of Materials)
+    implementation platform('com.google.firebase:firebase-bom:32.1.1')
+
+    // Firebase Analytics
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    // Google Play Services
+    implementation 'com.google.android.gms:play-services-base:18.1.0' // Use the latest valid version
+}
+
+// Apply google-services plugin here, after the dependencies block
+apply plugin: 'com.google.gms.google-services'
